@@ -90,9 +90,21 @@ describe("Detect tree task", () => {
     expect(ValidTree(n, edges)).toBe(true);
   })
 
-  it("Tree positively not detected", () => {
+  it("Tree positively not detected #1", () => {
     const n = 5;
     const edges = [[0,1],[1,2],[2,3],[1,3],[1,4]];
+    expect(ValidTree(n, edges)).toBe(false);
+  })
+
+  it("Tree positively not detected #2", () => {
+    const n = 5;
+    const edges = [[0,1],[2,1],[2,0],[2,4]];
+    expect(ValidTree(n, edges)).toBe(false);
+  })
+
+  it("Tree positively not detected #3", () => {
+    const n = 4;
+    const edges = [[0,1],[2,3]];
     expect(ValidTree(n, edges)).toBe(false);
   })
 })

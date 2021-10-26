@@ -10,11 +10,16 @@ function DisjointSet() {
   }
 
   this.find = (x: number) => {
-    if (x === this.root[x]) {
-      return x;
+    while (x != this.root[x]) {
+      x = this.root[x];
     }
 
-    return this.root[x] = this.find(this.root[x]);
+    return x;
+    // if (x === this.root[x]) {
+    //   return x;
+    // }
+    //
+    // return this.root[x] = this.find(this.root[x]);
   }
 
   this.union = (x: number, y: number) => {
@@ -26,7 +31,7 @@ function DisjointSet() {
     }
 
     this.size -= 1;
-    this.root[y] = rootX;
+    this.root[rootY] = rootX;
   }
 
   this.connected = (x: number, y: number) => {
@@ -46,13 +51,14 @@ export default function validTree(n: number, edges: number[][]): boolean {
   for (let i = 0; i < length; i++) {
     const v1 = edges[i][0];
     const v2 = edges[i][1];
-    if (set.connected(v1, v2) && v1 != v2) {
+    const connected = set.connected(v1, v2);
+    if (connected && v1 != v2) {
       isTree = false;
       break;
     }
       set.union(v1, v2);
   }
 
-  return isTree
+  return isTree && set.size === 1
 }
 
