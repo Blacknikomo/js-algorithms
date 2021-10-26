@@ -1,4 +1,4 @@
-import DisjointSet from "./DisjointSet";
+import DisjointSet from "../DisjointSet";
 
 export default class Provinces {
   ds: DisjointSet

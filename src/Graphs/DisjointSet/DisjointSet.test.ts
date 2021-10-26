@@ -1,5 +1,6 @@
 import DisjointSet from "./DisjointSet";
-import Provinces from "./DisjointSet.provinces";
+import Provinces from "./tasks/Provinces";
+import ValidTree from "./tasks/DetectTree";
 
 describe("Disjoint Sets tests.", () => {
   const set = new DisjointSet();
@@ -78,5 +79,20 @@ describe("Provinces task", () => {
     const input = [[1,0,0],[0,1,0],[0,0,1]];
     const provinces = new Provinces(input)
     expect(provinces.analyze()).toBe(3);
+  })
+})
+
+describe("Detect tree task", () => {
+  it("Tree positively detected", () => {
+    const n = 5;
+    const edges = [[0,1],[0,2],[0,3],[1,4]];
+
+    expect(ValidTree(n, edges)).toBe(true);
+  })
+
+  it("Tree positively not detected", () => {
+    const n = 5;
+    const edges = [[0,1],[1,2],[2,3],[1,3],[1,4]];
+    expect(ValidTree(n, edges)).toBe(false);
   })
 })
