@@ -10,16 +10,11 @@ function DisjointSet() {
   }
 
   this.find = (x: number) => {
-    while (x != this.root[x]) {
-      x = this.root[x];
+    if (x === this.root[x]) {
+      return x;
     }
 
-    return x;
-    // if (x === this.root[x]) {
-    //   return x;
-    // }
-    //
-    // return this.root[x] = this.find(this.root[x]);
+    return this.root[x] = this.find(this.root[x]);
   }
 
   this.union = (x: number, y: number) => {

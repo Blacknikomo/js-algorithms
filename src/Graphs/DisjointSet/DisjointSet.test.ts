@@ -1,6 +1,7 @@
 import DisjointSet from "./DisjointSet";
 import Provinces from "./tasks/Provinces";
 import ValidTree from "./tasks/DetectTree";
+import earliestAcq from "./tasks/TheEarliestMomentOfAcquaintance";
 
 describe("Disjoint Sets tests.", () => {
   const set = new DisjointSet();
@@ -106,5 +107,23 @@ describe("Detect tree task", () => {
     const n = 4;
     const edges = [[0,1],[2,3]];
     expect(ValidTree(n, edges)).toBe(false);
+  })
+})
+
+describe("Earliest acquaintance", () => {
+  it ("Detects 20190301", () => {
+    const logs = [
+      [20190101,0,1],
+      [20190104,3,4],
+      [20190107,2,3],
+      [20190211,1,5],
+      [20190224,2,4],
+      [20190301,0,3],
+      [20190312,1,2],
+      [20190322,4,5]
+    ]
+    const n = 6
+
+    expect(earliestAcq(logs, n)).toBe(20190301)
   })
 })
