@@ -118,8 +118,22 @@ describe("Depth-first search", () => {
     const traverser = new DFSHelper(graph, Strategy.STACK);
     const paths = traverser.findPaths(start, end);
 
-    console.log("Detected paths: ", paths);
-
     expect(paths.length).toBe(3);
+  });
+
+
+  it("Find all paths in directed graph", () => {
+    const n = 4;
+    const edges = [[0, 1], [0, 2], [2, 3], [1, 3]];
+    const start = 0;
+    const end = 3;
+
+    // @ts-ignore
+    const graph = Graph.generateRandomGraph(n);
+    graph.applyEdges(edges, false);
+    const traverser = new DFSHelper(graph, Strategy.STACK);
+    const paths = traverser.findPaths(start, end);
+
+    expect(paths.length).toBe(2);
   })
 });
