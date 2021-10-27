@@ -12,7 +12,7 @@ describe("Graph tests", () => {
   it("Random graph is created. Can't add edges to undefined vertex", () => {
     const numberOfVertices = 10;
     const graph = Graph.generateRandomGraph(numberOfVertices);
-    const addResult = graph.addEdges(255, 16678);
+    const addResult = graph.addEdge(255, 16678);
 
     expect(addResult).toBeFalsy();
   });
@@ -20,9 +20,9 @@ describe("Graph tests", () => {
   it("Random graph is created. 3 edges established", () => {
     const numberOfVertices = 3;
     const graph = Graph.generateRandomGraph(numberOfVertices);
-    graph.addEdges(0, 1);
-    graph.addEdges(1, 2);
-    graph.addEdges(2, 0);
+    graph.addEdge(0, 1);
+    graph.addEdge(1, 2);
+    graph.addEdge(2, 0);
 
     const adjacency = graph.getAdjacencyList();
 
