@@ -13,4 +13,15 @@ export default class Stack<T> {
   isEmpty(): boolean {
     return this.stack.length === 0;
   }
+
+  clear() {
+    this.stack = [];
+  }
+
+  look(number) {
+    if (number > this.stack.length) {
+      return null;
+    }
+    this.stack[-number];
+  }
 }

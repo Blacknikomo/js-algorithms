@@ -13,6 +13,12 @@ export default class Graph {
     return graph;
   }
 
+  applyEdges(edges: number[][], bidirectional = true) {
+    for (let i = 0; i < edges.length; i++) {
+      this.addEdge(edges[i][0], edges[i][1], bidirectional);
+    }
+  }
+
   addVertex(vertex: number) {
     if (this.adjacency[vertex]) {
       return;
@@ -25,14 +31,13 @@ export default class Graph {
     return this.adjacency;
   }
 
-  addEdge(v1: number, v2: number): boolean {
+  addEdge(v1: number, v2: number, bidirectional = true): boolean {
     if (!this.adjacency[v1] || !this.adjacency[v2]) {
       return false
     }
 
-    // O(4v)
     if (!this.adjacency[v1].includes(v2)) this.adjacency[v1].push(v2);
-    if (!this.adjacency[v2].includes(v1)) this.adjacency[v2].push(v1);
+    if (bidirectional && !this.adjacency[v2].includes(v1)) this.adjacency[v2].push(v1);
 
     return true
   }
