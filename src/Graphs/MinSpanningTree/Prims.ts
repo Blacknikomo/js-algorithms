@@ -1,15 +1,8 @@
-import DisjointSet from "../DisjointSet/DisjointSet";
-
 export default class Prims {
   vertices: number[][];
-  unionFind: DisjointSet
-
 
   constructor(vertices: number[][]) {
     this.vertices = vertices;
-    this.unionFind = new DisjointSet();
-
-    vertices.forEach((_, index) => this.unionFind.add(index));
   }
 
   getMinCost() {
@@ -18,7 +11,7 @@ export default class Prims {
     let length = 0;
 
     while(notVisited.length > 0) {
-      let min: {length: number, j, xj, yj} = null
+      let min: {length: number, j} = null
 
       for (let i = 0; i < visited.length; i++) {
         for (let j = 0; j < notVisited.length; j++) {
@@ -30,15 +23,13 @@ export default class Prims {
           if (!min || min?.length > length) {
             min = {
               length,
-              xj,
-              yj,
               j
             }
           }
         }
       }
 
-      visited.push([min.xj, min.yj]);
+      visited.push(notVisited[min.j]);
       notVisited.splice(min.j, 1);
 
       length += min.length;
