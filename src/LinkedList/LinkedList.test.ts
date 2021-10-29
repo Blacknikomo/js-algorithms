@@ -5,7 +5,6 @@ describe("Linked lists", () => {
     const list = new LinkedList<number>();
     Array.from({length: 5}, (_, i) => list.add(i));
 
-    // @ts-ignore
     const {head} = list.getInternals();
     expect(head.next.next.next.next.value).toBe(4);
   });
@@ -41,6 +40,16 @@ describe("Linked lists", () => {
     list.delete(2);
     const {head} = list.getInternals()
     expect(head.next.next.value).toBe(3);
+  });
+
+
+  it("Added an element to the beginning of the list", () => {
+    const list = new LinkedList<number>();
+    Array.from({length: 5}, (_, i) => list.add(i));
+
+    list.prepend(6);
+    const {head} = list.getInternals()
+    expect(head.value).toBe(6);
   });
 
 })
