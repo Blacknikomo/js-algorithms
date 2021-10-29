@@ -26,5 +26,9 @@ export default class Queue<T> {
     }
   }
 
+  isEmpty() {
+    return this.size === 0
+  }
+
   get size() { return this.storage.size }
 }
