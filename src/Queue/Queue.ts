@@ -1,15 +1,30 @@
-class Queue<T> {
-  storage: Array<T>;
+import LinkedList from "../LinkedList/LinkedList";
 
-  constructor(size = 500) {
-    this.storage = new Array(size);
-  }
+export default class Queue<T> {
+  storage: LinkedList<T> = new LinkedList<T>();
+
+  constructor() {}
 
   enqueue(item: T) {
-    this.storage = [item, ...this.storage];
+    this.storage.add(item);
   }
 
-  dequeue() {
-    return this.storage.pop();
+  dequeue(): T {
+    const {head} = this.storage.getInternals();
+    if (head === null) {
+      return null;
+    }
+
+    return this.storage.delete(head.value);
   }
+
+  flush() {
+    let {head} = this.storage.getInternals();
+    while (head) {
+      this.storage.delete(head.value)
+      head = head.next;
+    }
+  }
+
+  get size() { return this.storage.size }
 }

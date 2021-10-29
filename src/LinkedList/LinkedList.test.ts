@@ -52,4 +52,16 @@ describe("Linked lists", () => {
     expect(head.value).toBe(6);
   });
 
+
+  it("Size is correct", () => {
+    const list = new LinkedList<number>();
+    Array.from({length: 5}, (_, i) => list.add(i));
+
+    list.prepend(6);
+    list.add(4);
+    list.add(5);
+    list.delete(3);
+    expect(list.size).toBe(7);
+  });
+
 })

@@ -17,17 +17,20 @@ export class LinkedListItem<T> {
 export default class LinkedList<T> {
   private head: LinkedListItem<T> = null;
   private tail: LinkedListItem<T> = null;
+  size: number = 0;
 
   constructor() {}
 
   prepend(value: T): LinkedList<T> {
     const node = new LinkedListItem(value, this.head);
     this.head = node;
+    this.size++;
     return this;
   }
 
   add(value: T): LinkedList<T> {
     const node = new LinkedListItem<T>(value);
+    this.size++;
 
     if (this.head === null) {
       this.head = node;
@@ -68,6 +71,7 @@ export default class LinkedList<T> {
     if (this.head.value === value) {
       const buff = this.head.value;
       this.head = this.head.next;
+      this.size--;
       return buff;
     }
 
@@ -81,6 +85,7 @@ export default class LinkedList<T> {
           this.tail = prevNode;
         }
 
+        this.size--;
         return node.value;
       }
       prevNode = node;
@@ -93,7 +98,8 @@ export default class LinkedList<T> {
   getInternals() {
     return {
       head: this.head,
-      tail: this.tail
+      tail: this.tail,
+      size: this.size
     }
   }
 }
