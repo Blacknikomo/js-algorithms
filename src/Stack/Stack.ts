@@ -17,11 +17,4 @@ export default class Stack<T> {
   clear() {
     this.stack = [];
   }
-
-  look(number) {
-    if (number > this.stack.length) {
-      return null;
-    }
-    this.stack[-number];
-  }
 }
