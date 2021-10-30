@@ -31,8 +31,24 @@ export default class Graph {
     return this.adjacency;
   }
 
+  get size() {
+    return Object.keys(this.adjacency).length;
+  }
+
+  checkConnection(v1: number) {
+    return {
+      to: (v2: number) => {
+        if (this.adjacency[v1] == null || this.adjacency[v2] == null) {
+          return false
+        }
+
+        return this.adjacency[v1].includes[v2]
+      }
+    }
+  }
+
   addEdge(v1: number, v2: number, bidirectional = true): boolean {
-    if (!this.adjacency[v1] || !this.adjacency[v2]) {
+    if (this.adjacency[v1] == null || this.adjacency[v2] == null) {
       return false
     }
 

@@ -46,7 +46,7 @@ class DFSHelper {
     stack.put([start]);
 
     while (!stack.isEmpty()) {
-      const path = stack.next();
+      const path = stack.pop();
       const element = path[path.length - 1];
 
       Object.keys(visited).forEach((key) => {
@@ -112,7 +112,7 @@ class DFSHelper {
 
     // O(E)
     while (!this.stack.isEmpty()) {
-      const element = this.stack.next();
+      const element = this.stack.pop();
 
       const connections = adjacencyList[element];
       this.discovered[element] = true

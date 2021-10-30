@@ -6,7 +6,7 @@ export default class Stack<T> {
     this.stack.push(task)
   }
 
-  next(): T {
+  pop(): T {
     return this.stack.pop();
   }
 
