@@ -2,7 +2,7 @@ import Comparator from "../Utils/Comparator";
 
 // Initially min heap
 export default class Heap<T> {
-  compareFn: Comparator<T>;
+  compare: Comparator<T>;
   storage: Array<T> = [];
 
   constructor(comparator = new Comparator<T>()) {
@@ -10,7 +10,7 @@ export default class Heap<T> {
       throw new TypeError("Not allowed to create a HeapInstance directly");
     }
 
-    this.compareFn = comparator;
+    this.compare = comparator;
   }
 
   add(item: T): Heap<T> {
@@ -49,7 +49,7 @@ export default class Heap<T> {
   }
 
   right(index: number) {
-    return this.storage[this.getLeftChildIndex(index)];
+    return this.storage[this.getRightChildIndex(index)];
   }
 
   parent(index: number) {
@@ -62,7 +62,7 @@ export default class Heap<T> {
     this.storage[index1] = buf;
   }
 
-  next(): T | null {
+  peek(): T | null {
     if (this.storage.length === 0) {
       return null
     }
@@ -117,28 +117,52 @@ export default class Heap<T> {
     return this;
   }
 
-  find(item: T, comparator: Comparator<T>) {
-    return this.storage.map((_, index) => comparator.equal(item, this.storage[index]) && index)
+  find(item: T, comparator: Comparator<T> = this.compare) {
+    const foundItemIndices = [];
+
+    for (let itemIndex = 0; itemIndex < this.storage.length; itemIndex += 1) {
+      if (comparator.equal(item, this.storage[itemIndex])) {
+        foundItemIndices.push(itemIndex);
+      }
+    }
+
+    return foundItemIndices;
   }
 
-  remove(item, comparator = this.compareFn) {
-    const itemsToRemove = this.find(item, comparator);
+  remove(item, comparator = this.compare) {
+    const numberOfItemsToRemove = this.find(item, comparator).length;
 
-    itemsToRemove.forEach(() => {
+    for (let iteration = 0; iteration < numberOfItemsToRemove; iteration += 1) {
+      // We need to find item index to remove each time after removal since
+      // indices are being changed after each heapify process.
       const indexToRemove = this.find(item, comparator).pop();
 
+      // If we need to remove last child in the heap then just remove it.
+      // There is no need to heapify the heap afterwards.
       if (indexToRemove === (this.storage.length - 1)) {
         this.storage.pop();
       } else {
+        // Move last element in heap to the vacant (removed) position.
         this.storage[indexToRemove] = this.storage.pop();
-        const parent = this.parent(indexToRemove);
 
-        this.hasLeftChild(indexToRemove) && (!parent || this.pairIsInCorrectOrder(parent, this.storage[indexToRemove])) ?
-          this.heapifyDown():
-          this.heapifyUp()
+        // Get parent.
+        const parentItem = this.parent(indexToRemove);
 
+        // If there is no parent or parent is in correct order with the node
+        // we're going to delete then heapify down. Otherwise heapify up.
+        if (
+          this.hasLeftChild(indexToRemove)
+          && (
+            !parentItem
+            || this.pairIsInCorrectOrder(parentItem, this.storage[indexToRemove])
+          )
+        ) {
+          this.heapifyDown(indexToRemove);
+        } else {
+          this.heapifyUp(indexToRemove);
+        }
       }
-    });
+    }
 
     return this;
   }
@@ -152,5 +176,9 @@ export default class Heap<T> {
 
   isEmpty() {
     return this.storage.length === 0;
+  }
+
+  toString() {
+    return this.storage.toString();
   }
 }

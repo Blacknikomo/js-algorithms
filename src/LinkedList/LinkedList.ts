@@ -22,8 +22,7 @@ export default class LinkedList<T> {
   constructor() {}
 
   prepend(value: T): LinkedList<T> {
-    const node = new LinkedListItem(value, this.head);
-    this.head = node;
+    this.head = new LinkedListItem(value, this.head);
     this.size++;
     return this;
   }

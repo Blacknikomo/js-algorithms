@@ -1,15 +1,16 @@
-type CompareFunctionType = (a: any, b: any) => -1 | 0 | 1;
-export default class Comparator {
-  compareFn: CompareFunctionType
+export type CompareFunctionType<T> = (a: T, b: T) => -1 | 0 | 1;
 
-  static defaultCompareFunction: CompareFunctionType = (a, b) => {
-    if (a == b) {
+export default class Comparator<T> {
+  compareFn: CompareFunctionType<T | number>
+
+  static defaultCompareFunction: CompareFunctionType<number> = (a, b) => {
+    if (a === b) {
       return 0;
     }
 
-    return a > b ? 1 : -1;
+    return a < b ? -1 : 1;
   }
-  constructor(compareFn?: CompareFunctionType) {
+  constructor(compareFn?: CompareFunctionType<T>) {
     this.compareFn = compareFn || Comparator.defaultCompareFunction;
   }
 
@@ -18,11 +19,11 @@ export default class Comparator {
   }
 
   lessOrEqualThan(a, b) {
-    return this.compareFn(a, b) <= 0;
+    return this.less(a, b) || this.equal(a, b)
   }
 
   greaterOrEqualThan(a, b) {
-    return this.compareFn(a, b) >= 0;
+    return this.greater(a, b) || this.equal(a, b)
   }
 
   less(a, b) {
@@ -31,5 +32,10 @@ export default class Comparator {
 
   greater(a, b) {
     return this.compareFn(a, b) > 0;
+  }
+
+  reverse() {
+    const compareOriginal = this.compareFn;
+    this.compareFn = (a, b) => compareOriginal(b, a);
   }
 }
