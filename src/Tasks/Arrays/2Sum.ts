@@ -2,12 +2,12 @@
 type Hash = {[value: number]: Array<number>}
 
 export const twoSum = (arr: number[], target = 0) => {
-  const sorted = arr.sort((a, b) => a - b);
+  const sorted = [...arr].sort((a, b) => a - b);
   const hash: Hash = {};
   let signBorderIndex = null;
 
-  for (let i = 0; i < sorted.length; i++) {
-    const value = sorted[i];
+  for (let i = 0; i < arr.length; i++) {
+    const value = arr[i];
     hash[value] = hash[value] || [];
     hash[value].push(i)
 
