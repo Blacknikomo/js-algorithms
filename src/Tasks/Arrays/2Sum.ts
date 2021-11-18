@@ -23,10 +23,14 @@ export const twoSum = (arr: number[], target = 0) => {
 
     hash[complementValue] = hash[complementValue] || [];
 
-    if (hash[complementValue].length > 0 && hash[currentValue].length > 0) {
+    if (
+      complementValue != currentValue &&
+      hash[complementValue].length > 0 && hash[currentValue].length > 0 ||
+      complementValue == currentValue == hash[complementValue].length > 1
+    ) {
       const complementIndex = hash[complementValue].pop();
       const currentIndex = hash[currentValue].pop();
-      result.push([currentIndex, complementIndex]);
+      currentIndex != null && complementIndex != null && result.push([currentIndex, complementIndex]);
     }
   }
 
