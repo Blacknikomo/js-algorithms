@@ -22,3 +22,28 @@ export const howSumBruteForce = (target: number, nums: Array<number>): number[][
     return digits.length ? digits : false;
   // }
 }
+
+export const howSumTopBottom = (target: number, nums: Array<number>, memo = {}): number[][] | boolean | null => {
+  if (target < 0) return false
+  if (target == 0) return true
+
+  if (target in memo) return memo[target]
+
+  let digits = [];
+
+  for (let num of nums) {
+    const can = howSumTopBottom(target - num, nums, memo);
+
+    if (can === true) {
+      digits.push([num])
+    }
+
+    if (Array.isArray(can)) {
+      can.forEach((item) => digits.push([...item, num]))
+    }
+
+  }
+
+  memo[target] = digits.length ? digits : false;
+  return memo[target];
+}
