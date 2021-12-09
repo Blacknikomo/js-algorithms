@@ -1,30 +1,33 @@
 export default class GraphVertex<T> {
   value: T;
-  edges: Array<GraphVertex<T>>
-  id: Symbol;
+  edges: Set<GraphVertex<T>> = new Set();
+  private readonly id: Symbol;
 
-  constructor(value: T, edges: Array<GraphVertex<T>>) {
+  constructor(value: T) {
     this.value = value;
-    this.edges = edges;
-    this.id = Symbol("vertex");
+    this.id = Symbol(`vertex-${value.toString()}`);
   }
 
-  private isConnectedTo(vertex: GraphVertex<T>): boolean {
-    return this.edges.includes(vertex);
+  get key() {
+    return this.id;
+  }
+
+  isConnectedTo(vertex: GraphVertex<T>): boolean {
+    return this.edges.has(vertex);
   }
 
   removeConnection(vertex: GraphVertex<T>) {
-    this.edges.filter(item => item != vertex);
+    this.edges.delete(vertex);
   }
 
-  connectTo(vertex: GraphVertex<T>, bidirect = true) {
+  connectTo(vertex: GraphVertex<T>, directed = false) {
     if (this.isConnectedTo(vertex)) {
       return;
     }
 
-    this.edges.push(vertex);
+    this.edges.add(vertex);
 
-    if (bidirect) {
+    if (directed == false) {
       vertex.connectTo(this);
     }
   }
