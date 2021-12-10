@@ -98,6 +98,10 @@ describe("Graph vertices tests", () => {
     expect(v2.isConnectedTo(v1)).toBeTruthy();
     expect(v3.isConnectedTo(v4)).toBeTruthy();
     expect(v4.isConnectedTo(v3)).toBeFalsy();
+
+    v3.disconnectFrom(v4);
+    expect(v3.isConnectedTo(v4)).toBeFalsy();
+
   });
 
 })

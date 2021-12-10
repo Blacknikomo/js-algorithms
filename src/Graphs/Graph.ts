@@ -30,9 +30,8 @@ export default class Graph {
     return this.vertices.size;
   }
 
-  getEdges() {
-    return this.edges;
-  }
+  getVertices = () => this.vertices;
+  getEdges = () => this.edges;
 
   addEdge(v1: GraphVertex<any> | GraphEdge<any>, v2?: GraphVertex<any>, weight = 0): void {
     if (v1 instanceof GraphEdge) {

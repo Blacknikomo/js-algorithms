@@ -1,26 +1,23 @@
 import Graph from "../Graph";
 import Queue from "../../Queue/Queue";
+import GraphVertex from "../Graph.vertex";
 
 function noop() {}
 
 export default class BFS {
   graph: Graph;
-  visited = {};
-  discovered = {}
-
-  queue = new Queue<number>();
+  queue = new Queue<GraphVertex<any>>();
 
   constructor(graph: Graph) {
     this.graph = graph;
   }
 
-  public traverse(start: number, onVisit: (node: number) => void = noop) {
+  public traverse(start: GraphVertex<any>, onVisit: (node: GraphVertex<any>) => void = noop): GraphVertex<any>[] {
     const visited = [];
-    const discovered = {};
-    const adjacentVertices = this.graph.getAdjacencyList();
+    const discovered = new Set<GraphVertex<any>>();
 
     this.queue.enqueue(start);
-    discovered[start] = true;
+    discovered.add(start);
 
     while (!this.queue.isEmpty()) {
       let node = this.queue.dequeue();
@@ -28,12 +25,11 @@ export default class BFS {
       onVisit(node);
       visited.push(node);
 
-      const adjacency = adjacentVertices[node]
-      for (let i = 0; i < adjacency.length; i++) {
-        const next = adjacency[i];
-        if (!discovered[next]) {
-          this.queue.enqueue(adjacency[i]);
-          discovered[next] = true;
+      const adjacentVertices = node.getAllConnections();
+      for (let vertex of adjacentVertices) {
+        if (!discovered.has(vertex)) {
+          this.queue.enqueue(vertex);
+          discovered.add(vertex);
         }
       }
     }
