@@ -1,60 +1,55 @@
-export default class Graph {
-  adjacency: {
-    [P: number]: Array<number>
-  } = {}
+import GraphVertex from "./Graph.vertex";
+import GraphEdge from "./Graph.edge";
 
-  constructor() {}
+export default class Graph {
+  private vertices: Set<GraphVertex<any>> = new Set();
+  private edges: Set<GraphEdge<any>> = new Set();
+  private directed = false;
+
+  constructor(directed = false) {
+    this.directed = directed;
+  }
 
   static generateRandomGraph(amount: number) {
     const items = Array.from(new Array(amount), (_, i) => i);
     const graph = new Graph();
 
-    items.forEach(v => graph.addVertex(v));
+    items.forEach(v => {
+      const vertex = new GraphVertex(v);
+      graph.addVertex(vertex);
+    });
+
     return graph;
   }
 
-  applyEdges(edges: number[][], bidirectional = true) {
-    for (let i = 0; i < edges.length; i++) {
-      this.addEdge(edges[i][0], edges[i][1], bidirectional);
-    }
-  }
-
-  addVertex(vertex: number) {
-    if (this.adjacency[vertex]) {
-      return;
-    }
-
-    this.adjacency[vertex] = [];
-  }
-
-  getAdjacencyList() {
-    return this.adjacency;
+  addVertex(vertex: GraphVertex<any>) {
+    this.vertices.add(vertex);
   }
 
   get size() {
-    return Object.keys(this.adjacency).length;
+    return this.vertices.size;
   }
 
-  checkConnection(v1: number) {
-    return {
-      to: (v2: number) => {
-        if (this.adjacency[v1] == null || this.adjacency[v2] == null) {
-          return false
-        }
-
-        return this.adjacency[v1].includes[v2]
-      }
-    }
+  getEdges() {
+    return this.edges;
   }
 
-  addEdge(v1: number, v2: number, bidirectional = true): boolean {
-    if (this.adjacency[v1] == null || this.adjacency[v2] == null) {
-      return false
+  addEdge(v1: GraphVertex<any> | GraphEdge<any>, v2?: GraphVertex<any>, weight = 0): void {
+    if (v1 instanceof GraphEdge) {
+      this.edges.add(v1);
+      this.addVertex(v1.startVertex);
+      this.addVertex(v1.endVertex);
+      return;
     }
 
-    if (!this.adjacency[v1].includes(v2)) this.adjacency[v1].push(v2);
-    if (bidirectional && !this.adjacency[v2].includes(v1)) this.adjacency[v2].push(v1);
+    if (v1 instanceof GraphVertex && v2 instanceof GraphVertex) {
+      v1.connectTo(v2, this.directed);
+      this.addVertex(v1);
+      this.addVertex(v2);
 
-    return true
+      const edge = new GraphEdge(v1, v2, weight)
+      this.edges.add(edge);
+      return;
+    }
   }
 }

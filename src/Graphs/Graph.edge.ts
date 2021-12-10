@@ -8,7 +8,7 @@ export default class GraphEdge<T> {
   public id: Symbol;
 
   constructor(v1: GraphVertex<T>, v2: GraphVertex<T>, weight: number = 0) {
-    if (!v1.isConnectedTo(v2)) {
+    if (!v1.isConnectedTo(v2) && !v2.isConnectedTo(v1)) {
       throw new TypeError("Vertices are not connected. Connect them first.")
     }
 
@@ -16,6 +16,10 @@ export default class GraphEdge<T> {
     this.endVertex = v2;
     this.weight = weight;
     this.id = GraphEdge.generateID(v1, v2);
+  }
+
+  getKey() {
+    return GraphEdge.generateID(this.startVertex, this.endVertex);
   }
 
   reverse() {

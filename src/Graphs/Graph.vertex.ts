@@ -1,6 +1,6 @@
 export default class GraphVertex<T> {
   value: T;
-  edges: Set<GraphVertex<T>> = new Set();
+  private edges: Set<GraphVertex<T>> = new Set();
   private readonly id: Symbol;
 
   constructor(value: T) {
@@ -14,6 +14,10 @@ export default class GraphVertex<T> {
 
   isConnectedTo(vertex: GraphVertex<T>): boolean {
     return this.edges.has(vertex);
+  }
+
+  getAllConnections() {
+    return this.edges;
   }
 
   removeConnection(vertex: GraphVertex<T>) {
