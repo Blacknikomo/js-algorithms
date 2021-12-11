@@ -1,5 +1,6 @@
 import Graph from "../Graph";
 import Stack from "../../Stack/Stack";
+import GraphVertex from "../Graph.vertex";
 
 function noop(node) {
   console.log(`Visit vertex ${node}`);
@@ -11,21 +12,12 @@ export enum Strategy {
 }
 class DFSHelper {
   graph: Graph;
-  visited = {};
-  discovered = {};
-
-  // @ts-ignore
-  stack: Stack<number> = new Stack<number>()
-  depth = 0
-
   strategy: Strategy
 
   constructor(graph: Graph, strategy: Strategy = Strategy.RECURSION) {
     this.graph = graph;
     this.strategy = strategy
   }
-
-  public printTree() {}
 
   public traverse(...args) {
     switch (this.strategy) {
@@ -38,35 +30,31 @@ class DFSHelper {
     }
   }
 
-  public findPaths(start: number, end: number): number[][] {
-    const adjacencyList = this.graph.getAdjacencyList();
+  public findPaths(start: GraphVertex<any>, end: GraphVertex<any>): GraphVertex<any>[][] {
     const paths = []
-    const visited = {}
-    const stack = new Stack<number[]>();
+    const visited = new Map<GraphVertex<any>, boolean>()
+    const stack = new Stack<GraphVertex<any>[]>();
     stack.put([start]);
 
     while (!stack.isEmpty()) {
       const path = stack.pop();
       const element = path[path.length - 1];
 
-      Object.keys(visited).forEach((key) => {
-        visited[key] = false;
-      })
-      path.forEach(item => visited[item] = true)
+      for (let key of visited.keys()) {
+        visited.set(key, false);
+      }
 
-      const connectedVertices = adjacencyList[element];
+      path.forEach(item => visited.set(item, true))
 
       if (element === end) {
         paths.push(path);
-        visited[element] = false
+        visited.set(element, false)
         continue;
       }
 
-      for (let i = 0; i < connectedVertices.length; i++) {
-        const tailCandidate = connectedVertices[i];
-
-        if (visited[tailCandidate] !== true) {
-          stack.put([...path, tailCandidate])
+      for (let vertex of element.getAllConnections().values()) {
+        if (visited.get(vertex) !== true) {
+          stack.put([...path, vertex])
         }
       }
     }
@@ -74,15 +62,14 @@ class DFSHelper {
     return paths;
   }
 
-
-  public checkIfPathExists(start: number, end: number): boolean {
-    const adjacencyList = this.graph.getAdjacencyList();
-    this.stack.clear();
-    this.stack.put(start);
-
+  checkIfPathExists(start: GraphVertex<any>, end: GraphVertex<any>): boolean {
+    const stack = new Stack<GraphVertex<any>>();
     const visited = new Set();
+    stack.clear();
+    stack.put(start);
 
-    function dfs(v) {
+
+    const dfs = (v: GraphVertex<any>) => {
       if (v === end) {
         return true;
       }
@@ -92,10 +79,10 @@ class DFSHelper {
       }
 
       visited.add(v);
-
-      for (let e = 0; e < adjacencyList[v].length; e++) {
-        if (dfs(adjacencyList[v][e])) {
-          return true;
+      // 0 1 2 3 4 5
+      for (let vertex of v.getAllConnections().values()) {
+        if (dfs(vertex)) {
+          return true
         }
       }
 
@@ -104,69 +91,64 @@ class DFSHelper {
 
     return dfs(start);
   }
+  public traverseWithStack(startNode: GraphVertex<any>, onVisit: (node) => void = noop) {
+    const discovered = new Set<GraphVertex<any>>();
+    const visited = new Set<GraphVertex<any>>();
+    const stack: Stack<GraphVertex<any>> = new Stack()
 
-  public traverseWithStack(startNode: number, onVisit: (node) => void = noop) {
-    const adjacencyList = this.graph.getAdjacencyList();
-    this.stack.clear();
-    this.stack.put(startNode);
+    stack.clear();
+    stack.put(startNode);
 
-    // O(E)
-    while (!this.stack.isEmpty()) {
-      const element = this.stack.pop();
+    while (!stack.isEmpty()) {
+      const element = stack.pop();
+      const connections = element.getAllConnections();
+      discovered.add(element);
 
-      const connections = adjacencyList[element];
-      this.discovered[element] = true
-
-      if (this.visited[element]) {
+      if (visited.has(element)) {
         continue;
       }
 
-      if (connections.length === 0) {
+      if (connections.size === 0) {
         onVisit(element);
-        this.visited[element] = true;
+        visited.add(element);
         continue;
       }
 
-      for (let i = 0; i < connections.length; i++) {
-        const nextNode = connections[i];
-        if (!this.discovered[nextNode]) {
-          this.stack.put(nextNode)
+      for (let neighbour of connections) {
+        if (!discovered.has(neighbour)) {
+          stack.put(neighbour);
         }
       }
 
       onVisit(element);
-      this.visited[element] = true;
+      visited.add(element);
     }
   }
 
-  public traverseRecursion(node: number, onVisit: (node) => void = noop) {
-    const adjacencyList = this.graph.getAdjacencyList();
-    const connections = adjacencyList[node];
-    this.discovered[node] = true
+  public traverseRecursion(
+    vertex: GraphVertex<any>,
+    onVisit: (node) => void = noop,
+    discovered = new Set<GraphVertex<any>>(),
+    visited = new Set<GraphVertex<any>>(),
+    ) {
+    const connections = vertex.getAllConnections();
+    discovered.add(vertex);
 
-    if (connections.length === 0) {
-      onVisit(node);
-      this.visited[node] = true
+    onVisit(vertex);
+    visited.add(vertex);
+
+    if (connections.size === 0) {
+      onVisit(vertex);
+      visited.add(vertex);
       return;
     }
 
-    for (let i = 0; i < connections.length; i++) {
-      const nextNode = connections[i];
-      if (!this.discovered[nextNode]) {
-        this.traverseRecursion(connections[i], onVisit);
+    for (let neighbour of connections.values()) {
+      if (!discovered.has(neighbour)) {
+        this.traverseRecursion(neighbour, onVisit, discovered, visited);
       }
     }
 
-    onVisit(node);
-    this.visited[node] = true
-  }
-
-  getVisitedCount() {
-    return Object.keys(this.visited).length;
-  }
-
-  getDiscoveredCount() {
-    return Object.keys(this.discovered).length;
   }
 }
 
