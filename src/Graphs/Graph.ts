@@ -10,9 +10,9 @@ export default class Graph {
     this.directed = directed;
   }
 
-  static generateRandomGraph(amount: number) {
+  static generateRandomGraph(amount: number, directed = false) {
     const items = Array.from(new Array(amount), (_, i) => i);
-    const graph = new Graph();
+    const graph = new Graph(directed);
 
     items.forEach(v => {
       const vertex = new GraphVertex(v);

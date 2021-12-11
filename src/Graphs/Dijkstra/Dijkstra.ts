@@ -1,64 +1,56 @@
 import PriorityQueue from "../../PriorityQueue/PriorityQueue";
 import Graph from "../Graph";
+import GraphVertex from "../Graph.vertex";
+import GraphEdge from "../Graph.edge";
 
 export default class Dijkstra {
   graph: Graph;
-  times: number[][];
-  start: number;
-  queue = new PriorityQueue();
 
+  queue = new PriorityQueue<GraphVertex<any>>();
 
-  constructor(graph: Graph, times: number[][], start) {
+  constructor(graph: Graph) {
     this.graph = graph;
-    this.times = times;
-    this.start = start;
   }
 
-  getMaxPathLength() {
-    const distances: {[P: number]: {distance: number; prevElement: number;}} = {}
-    const visited = {};
-    const previous = {};
+  checkFullPath() {}
+  updateMinWeightTreeIfNeeded() {}
 
-    Array.from(
-      ({length: this.graph.size}),
-      (_, i) => distances[i] = {distance: i == this.start ? 0 : Infinity, prevElement: null});
+  getShortestPath(start: GraphVertex<any>, finish: GraphVertex<any>) {
+    this.queue.flush();
+    const distances = [];
+    const edges = this.graph.getEdges();
+    const weights = new Map<GraphVertex<any>, number>();
 
-    const adjacencyList = this.graph.getAdjacencyList();
-
-    this.queue.add(this.start, distances[this.start].distance);
-
-    while (!this.queue.isEmpty()) {
-      let current = this.queue.poll();
-      const contiguous = adjacencyList[current];
-
-      contiguous.forEach(neighbor => {
-        if (!visited[neighbor]) {
-          const edge = this.times.find(([v1, v2]) => v1 === current && v2 === neighbor);
-          const [_, __, weight] = edge;
-
-          const existingDistanceToNeighbor = distances[neighbor].distance;
-          const distanceToNeighborFromCurrent = distances[current].distance + weight;
-
-          if (distanceToNeighborFromCurrent < existingDistanceToNeighbor) {
-            distances[neighbor].distance = distanceToNeighborFromCurrent;
-            previous[neighbor] = current;
-
-            if (this.queue.hasValue(neighbor)) {
-              this.queue.changePriority(neighbor, distances[neighbor].distance);
-            }
-
-          }
-
-          if (!this.queue.hasValue(neighbor)) {
-            this.queue.add(neighbor, distances[neighbor].distance);
-          }
-        }
-      })
-
-      visited[current] = current;
+    for (let vertex of this.graph.getVertices().values()) {
+      weights.set(vertex, vertex == start ? 0 : +Infinity);
     }
 
-    const res = Object.values(distances).map(({distance}) => distance).sort();
-    return res[res.length - 1]
+    this.queue.add(start);
+
+    while (!this.queue.isEmpty()) {
+      const anchor = this.queue.poll();
+      const neighbours = anchor.getAllConnections().values();
+
+      for (let neighbour of neighbours) {
+        const currentMinPath = weights.get(neighbour);
+        const edgeKey = GraphEdge.generateID(anchor, neighbour);
+        const edge = [...edges].find(edge => edge.id === edgeKey);
+
+        if (!edge) {
+          throw new Error(`No edge with a key ${edgeKey}`)
+        }
+
+        const newPathLength = weights.get(anchor) + edge.weight;
+        weights.set(neighbour, Math.min(newPathLength, currentMinPath));
+
+        if (neighbour == finish) {
+          distances.push(weights.get(neighbour));
+        } else {
+          this.queue.add(neighbour);
+        }
+      }
+    }
+
+    return distances.sort((a, b) => a - b)[0];
   }
 }

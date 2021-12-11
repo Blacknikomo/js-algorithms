@@ -13,6 +13,10 @@ export default class Heap<T> {
     this.compare = comparator;
   }
 
+  flush() {
+    this.storage = [];
+  }
+
   add(item: T): Heap<T> {
     this.storage.push(item);
     this.heapifyUp();
