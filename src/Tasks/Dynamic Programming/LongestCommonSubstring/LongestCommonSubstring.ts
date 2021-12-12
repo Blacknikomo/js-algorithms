@@ -1,28 +1,15 @@
-// Input: text1 = "abcde", text2 = "ace"
-// Output: 3
-// Explanation: The longest common subsequence is "ace" and its length is 3.
-
-export function longestCommonSubsequence(text1: string, text2: string): number {
+export function longestCommonSubsequence(text1: string, text2: string, memo = {}): number {
   if (!text1.length || !text2.length) return 0;
+  const key = `${text1}_${text2}`;
 
-  const [shortest, longest] = [text1, text2].sort((a, b) => a.length - b.length);
-  let memo = [];
+  if (key in memo) return memo[key];
 
-  for (let start = 0; start < shortest.length; start++) {
-    let lastFoundIndex = -1;
+  const letter1 = text1[0];
+  const letter1Index = text2.indexOf(letter1);
 
-    for (let i = start; i < shortest.length; i++) {
-      const letter = shortest[i];
-      for (let j = lastFoundIndex + 1; j < longest.length; j++) {
-        if (longest[j] === letter) {
-          lastFoundIndex = j;
-          memo[start] = memo[start] ? memo[start] + 1 : 1
-          break;
-        }
-      }
-    }
-  }
+  const including = longestCommonSubsequence(text1.slice(1), text2, memo);
+  const excluding = letter1Index >= 0 ? longestCommonSubsequence(text1.slice(1), text2.slice(letter1Index + 1), memo) + 1 : 0;
 
-  console.log(memo.join("|"));
-  return memo.sort((a, b) => b - a)[0] || 0;
+  memo[key] = Math.max(including, excluding);
+  return memo[key];
 }
