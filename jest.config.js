@@ -14,6 +14,7 @@ module.exports = {
     "json",
     "node",
   ],
+  "reporters": ["default", "jest-teamcity"],
   testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.(ts|js)x?$',
   coverageDirectory: 'coverage',
   collectCoverageFrom: [
